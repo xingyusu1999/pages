@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xingyu Su | Personal Academic Homepage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ivory: #f5f5f6;
+    --warm-white: #ffffff;
+    --charcoal: #0f1115;
+    --muted: #505661;
+    --border: #d7dbe3;
+    --accent: #163a63;
+    --accent-2: #0f2742;
+    --accent-light: #eef3f8;
+    --serif: 'Lora', Georgia, serif;
+    --sans: 'Lato', system-ui, sans-serif;
+    --nav-h: 64px;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    background: var(--warm-white);
+    color: var(--charcoal);
+    font-size: 16px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--nav-h);
+    background: rgba(255,255,255,0.97);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 clamp(1.5rem, 5vw, 4rem);
+    z-index: 100;
+  }
+  .nav-logo {
+    font-family: var(--serif);
+    font-size: 1.25rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: var(--charcoal);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-logo:hover { color: var(--accent); }
+  .nav-links {
+    display: flex;
+    gap: clamp(1rem, 3vw, 2.5rem);
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    padding-bottom: 2px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .nav-links a:hover,
+  .nav-links a.active {
+    color: var(--charcoal);
+    border-bottom-color: var(--charcoal);
+  }
+  /* ── HAMBURGER (mobile) ── */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 4px;
+  }
+  .hamburger span {
+    display: block;
+    width: 22px;
+    height: 1.5px;
+    background: var(--charcoal);
+    transition: all 0.3s;
+  }
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: var(--nav-h);
+    left: 0; right: 0;
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--border);
+    padding: 1.5rem clamp(1.5rem, 5vw, 4rem);
+    z-index: 99;
+  }
+  .mobile-menu.open { display: block; }
+  .mobile-menu a {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+    transition: color 0.2s;
+  }
+  .mobile-menu a:last-child { border-bottom: none; }
+  .mobile-menu a:hover { color: var(--charcoal); }
+  /* ── MAIN ── */
+  main {
+    padding-top: var(--nav-h);
+    min-height: 100vh;
+  }
+  /* ── HERO ── */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: calc(100vh - var(--nav-h));
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.15s;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hero-photo {
+    position: relative;
+    overflow: hidden;
+    background: var(--ivory);
+    border-right: 1px solid var(--border);
+  }
+  .hero-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+  }
+  /* Placeholder when no image */
+  .photo-placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 520px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--ivory);
+    color: var(--muted);
+    gap: 1rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-align: center;
+    padding: 2rem;
+  }
+  .photo-placeholder svg { opacity: 0.35; }
+  .photo-placeholder p { text-transform: uppercase; font-size: 0.78rem; }
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(2.5rem, 6vw, 5rem) clamp(2rem, 5vw, 4.5rem);
+    background: var(--warm-white);
+  }
+  .hero-eyebrow {
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.2rem;
+  }
+  .hero-name {
+    font-family: var(--serif);
+    font-size: clamp(2.4rem, 4.5vw, 3.6rem);
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(1.1rem, 1.8vw, 1.35rem);
+    font-weight: 400;
+    font-style: italic;
+    color: var(--muted);
+    margin-bottom: 2rem;
+  }
+  .divider {
+    width: 40px;
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 2rem;
+  }
+  .hero-bio {
+    font-size: 0.97rem;
+    line-height: 1.8;
+    color: #1d1d1f;
+    max-width: 480px;
+    margin-bottom: 2.5rem;
+  }
+  /* ── LINKS ── */
+  .link-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .link-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .link-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: var(--charcoal);
+    text-decoration: none;
+    padding: 0.45rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    background: transparent;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .chip:hover {
+    background: var(--accent-light);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .chip svg { flex-shrink: 0; }
+  .chip-primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    font-weight: 700;
+  }
+  .chip-primary:hover {
+    background: #2a2a2d;
+    border-color: #2a2a2d;
+    color: #fff;
+  }
+  /* ── SECTIONS ── */
+  section {
+    padding: 5rem clamp(1.5rem, 5vw, 4rem);
+    max-width: 1100px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards;
+  }
+  section:nth-of-type(1) { animation-delay: 0.1s; }
+  section:nth-of-type(2) { animation-delay: 0.2s; }
+  section:nth-of-type(3) { animation-delay: 0.3s; }
+  .section-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+  }
+  .section-heading {
+    font-family: var(--serif);
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 500;
+    line-height: 1.15;
+    margin-bottom: 1.5rem;
+    color: var(--accent);
+  }
+  .section-body {
+    font-size: 0.97rem;
+    line-height: 1.85;
+    color: #1d1d1f;
+    max-width: 680px;
+  }
+  /* ── RESEARCH CARDS ── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  .card {
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    background: var(--warm-white);
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+  }
+  .card:hover {
+    border-color: var(--charcoal);
+    transform: translateY(-3px);
+    box-shadow: 0 16px 28px rgba(0,0,0,0.08);
+  }
+  .card-tag {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.7rem;
+  }
+  .card-title {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    font-weight: 500;
+    line-height: 1.35;
+    margin-bottom: 0.8rem;
+    color: var(--accent);
+  }
+  .card-body {
+    font-size: 0.87rem;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+  /* ── PUBLICATIONS ── */
+  .pub-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 1.5rem;
+  }
+  .pub-item {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .pub-item:first-child { border-top: 1px solid var(--border); }
+  .pub-year {
+    font-size: 0.82rem;
+    color: var(--muted);
+    font-weight: 300;
+    padding-top: 0.1rem;
+  }
+  .pub-title {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    font-weight: 500;
+    line-height: 1.4;
+    margin-bottom: 0.3rem;
+    color: var(--charcoal);
+  }
+  .pub-meta {
+    font-size: 0.83rem;
+    color: var(--muted);
+  }
+  .pub-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent-light);
+    border-radius: 100px;
+    padding: 0.15rem 0.6rem;
+    margin-top: 0.4rem;
+  }
+
+  /* ── NEWS / HIGHLIGHTS ── */
+  .news-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    align-items: start;
+  }
+  .news-panel,
+  .highlight-panel {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--warm-white);
+    padding: 1.6rem;
+    box-shadow: 0 10px 28px rgba(15, 23, 34, 0.04);
+  }
+  .news-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .news-item {
+    display: grid;
+    grid-template-columns: 104px 1fr;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .news-item:first-child { padding-top: 0.2rem; }
+  .news-item:last-child { border-bottom: none; padding-bottom: 0.2rem; }
+  .news-date {
+    font-size: 0.76rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    line-height: 1.5;
+  }
+  .news-title {
+    font-family: var(--serif);
+    font-size: 1.03rem;
+    color: var(--charcoal);
+    margin-bottom: 0.25rem;
+  }
+  .news-body {
+    font-size: 0.89rem;
+    color: var(--muted);
+    line-height: 1.75;
+  }
+  .news-tag {
+    display: inline-block;
+    margin-top: 0.55rem;
+    padding: 0.18rem 0.62rem;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    border: 1px solid #cdd9e7;
+  }
+  .highlight-panel h3,
+  .news-panel h3 {
+    font-family: var(--serif);
+    font-size: 1.12rem;
+    color: var(--accent);
+    margin-bottom: 0.95rem;
+  }
+  .highlight-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+  .highlight-item {
+    padding: 0.95rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #fafbfd;
+  }
+  .highlight-item strong {
+    display: block;
+    color: var(--charcoal);
+    font-size: 0.9rem;
+    margin-bottom: 0.15rem;
+  }
+  .highlight-item span {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* ── CONTACT ── */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+    margin-top: 1.5rem;
+  }
+  .contact-info dt {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+    margin-top: 1.25rem;
+  }
+  .contact-info dt:first-child { margin-top: 0; }
+  .contact-info dd {
+    font-size: 0.97rem;
+    color: var(--charcoal);
+    line-height: 1.6;
+  }
+  .contact-info dd a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent-light);
+    transition: border-color 0.2s;
+  }
+  .contact-info dd a:hover { border-bottom-color: var(--accent); }
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem clamp(1.5rem, 5vw, 4rem);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  footer p {
+    font-size: 0.78rem;
+    color: var(--muted);
+    letter-spacing: 0.03em;
+  }
+  .footer-back-top {
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 0.2s;
+  }
+  .footer-back-top:hover { color: var(--charcoal); }
+
+  /* ── SCHEDULE ── */
+  .schedule-wrap {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  .schedule-panel,
+  .schedule-note {
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    background: var(--warm-white);
+    padding: 1.6rem;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.06);
+  }
+  .schedule-subheading {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .schedule-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .schedule-item {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .schedule-item:first-child { padding-top: 0.2rem; }
+  .schedule-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0.2rem;
+  }
+  .schedule-date {
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    line-height: 1.5;
+  }
+  .schedule-title {
+    font-family: var(--serif);
+    font-size: 1.02rem;
+    color: var(--charcoal);
+    margin-bottom: 0.2rem;
+  }
+  .schedule-meta {
+    font-size: 0.87rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .schedule-status {
+    display: inline-block;
+    margin-top: 0.55rem;
+    padding: 0.18rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--accent);
+    border: 1px solid var(--accent);
+  }
+  .schedule-archive {
+    margin-top: 1.8rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1.5rem;
+  }
+  .schedule-archive details {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: #fafbfd;
+    margin-top: 0.9rem;
+    overflow: hidden;
+  }
+  .schedule-archive summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 1rem 1.2rem;
+    font-size: 0.86rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--charcoal);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .schedule-archive summary::-webkit-details-marker { display: none; }
+  .schedule-archive summary::after {
+    content: '+';
+    font-size: 1.2rem;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .schedule-archive details[open] summary::after { content: '−'; }
+  .archive-content {
+    padding: 0 1.2rem 1.1rem;
+    border-top: 1px solid var(--border);
+  }
+  .schedule-gallery {
+    margin-top: 0.9rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.85rem;
+  }
+  .schedule-figure {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--warm-white);
+    overflow: hidden;
+  }
+  .schedule-figure img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    display: block;
+    background: #e8e8e8;
+  }
+  .schedule-figure figcaption {
+    font-size: 0.76rem;
+    color: var(--muted);
+    line-height: 1.55;
+    padding: 0.7rem 0.8rem 0.85rem;
+  }
+  .schedule-note h3 {
+    font-family: var(--serif);
+    font-size: 1.08rem;
+    color: var(--accent);
+    margin-bottom: 0.9rem;
+  }
+  .schedule-note p,
+  .schedule-note li,
+  .schedule-note code {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.75;
+  }
+  .schedule-note p { margin-bottom: 0.9rem; }
+  .schedule-note p:last-child { margin-bottom: 0; }
+  .schedule-note ul {
+    margin: 0.6rem 0 1rem 1.1rem;
+  }
+  .schedule-note code {
+    background: #ededed;
+    color: var(--charcoal);
+    padding: 0.12rem 0.35rem;
+    border-radius: 6px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 720px) {
+    .hero {
+      grid-template-columns: 1fr;
+      grid-template-rows: 55vw auto;
+    }
+    .hero-photo { min-height: 55vw; }
+    .photo-placeholder { min-height: 55vw; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .news-grid { grid-template-columns: 1fr; }
+    .news-item { grid-template-columns: 1fr; gap: 0.35rem; }
+    .schedule-wrap { grid-template-columns: 1fr; }
+    .schedule-item { grid-template-columns: 1fr; gap: 0.35rem; }
+    .schedule-gallery { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<!-- NAVIGATION -->
+<nav>
+  <a href="#home" class="nav-logo">Xingyu Su</a>
+  <ul class="nav-links">
+    <li><a href="#home" class="active">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#research">Research</a></li>
+    <li><a href="#publications">Publications</a></li>
+    <li><a href="#news">News</a></li>
+    <li><a href="#schedule">Schedule</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#home" onclick="toggleMenu()">Home</a>
+  <a href="#about" onclick="toggleMenu()">About</a>
+  <a href="#research" onclick="toggleMenu()">Research</a>
+  <a href="#publications" onclick="toggleMenu()">Publications</a>
+  <a href="#news" onclick="toggleMenu()">News</a>
+  <a href="#schedule" onclick="toggleMenu()">Schedule</a>
+  <a href="#contact" onclick="toggleMenu()">Contact</a>
+</div>
+
+<main>
+  <!-- HERO -->
+  <div class="hero" id="home">
+    <div class="hero-photo">
+      <div class="photo-placeholder">
+        <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+          <circle cx="28" cy="22" r="10" stroke="#6a7a90" stroke-width="1.5"/>
+          <path d="M8 50c0-11 9-20 20-20s20 9 20 20" stroke="#6a7a90" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <p>Replace with your photo</p>
+      </div>
+    </div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Welcome to my homepage</p>
+      <h1 class="hero-name">Xingyu Su</h1>
+      <p class="hero-title">PhD Student · The University of Tokyo</p>
+      <div class="divider"></div>
+      <p class="hero-bio">
+        I am a PhD student at the University of Tokyo, working in Prof. Matsuda's laboratory.
+        My research focuses on nonlinear optics, ultrafast light–matter interactions, and soft X-ray
+        spectroscopy, with particular interest in semiconductor and magnetic materials. I am especially
+        interested in developing next-generation soft X-ray nonlinear spectroscopic techniques for
+        probing electronic and structural dynamics with element specificity.
+      </p>
+      <div class="link-group">
+        <p class="link-label">Academic</p>
+        <div class="link-row">
+          <a href="https://docs.google.com/document/d/1auyA3gRBbmyhKp0Y9uVy3lRqr40UKzqpILmE1-YoFvQ/edit?usp=sharing" target="_blank" class="chip chip-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Curriculum Vitae
+          </a>
+          <a href="https://scholar.google.com/citations?hl=zh-CN&user=5OJOqZQAAAAJ&view_op=list_works&gmla=AEk_c1sc6b1f0Cg720WZxoIF2HOGviwfz0wActaN8Z5equUufbxC9FUHfw9ftYAAxqvP8dJQQLiGgYmRqDY1Qbemqa8qwSrdnGOcO5Z8AYSMqGaEYSM" target="_blank" class="chip">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            Google Scholar
+          </a>
+        </div>
+        <p class="link-label" style="margin-top:0.8rem">Connect</p>
+        <div class="link-row">
+          <a href="https://www.linkedin.com/in/xingyu-su-b467b839a" target="_blank" class="chip">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <p class="section-label">About</p>
+    <h2 class="section-heading">Background &amp; Experience</h2>
+    <p class="section-body">
+      I am currently pursuing my PhD at the University of Tokyo, where I study ultrafast phenomena
+      in condensed matter systems using advanced optical and soft X-ray techniques. My academic
+      background is centered on nonlinear optics and strong-field light–matter interaction, with
+      research spanning semiconductors, magnetic materials, and ferroelectric systems.
+    </p>
+    <p class="section-body" style="margin-top:1.2rem">
+      My recent work includes theoretical and experimental studies of soft X-ray second-harmonic
+      generation (SXSHG), rotational anisotropy SHG, and ultrafast magnetization dynamics. I am
+      particularly interested in understanding how electronic structure, symmetry, and orbital degrees
+      of freedom govern nonlinear optical responses on ultrafast timescales. In addition, I work on
+      topics related to free-electron lasers (FELs) and their applications in next-generation spectroscopy.
+    </p>
+  </section>
+
+  <!-- RESEARCH -->
+  <section id="research" style="background: var(--ivory); max-width: 100%; padding-left: clamp(1.5rem,5vw,4rem); padding-right: clamp(1.5rem,5vw,4rem);">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <p class="section-label">Research</p>
+      <h2 class="section-heading">Research Interests</h2>
+      <div class="card-grid">
+        <div class="card">
+          <p class="card-tag">Area I</p>
+          <h3 class="card-title">Soft X-ray Nonlinear Spectroscopy</h3>
+          <p class="card-body">
+            Development and application of soft X-ray second-harmonic generation and related nonlinear
+            spectroscopic techniques to probe element-specific electronic, magnetic, and structural dynamics.
+          </p>
+        </div>
+        <div class="card">
+          <p class="card-tag">Area II</p>
+          <h3 class="card-title">Ultrafast Light–Matter Interaction in Condensed Matter</h3>
+          <p class="card-body">
+            Investigation of ultrafast phenomena in semiconductors, magnetic materials, and ferroelectrics,
+            including photoinduced symmetry breaking, charge redistribution, and spin-orbital dynamics.
+          </p>
+        </div>
+        <div class="card">
+          <p class="card-tag">Area III</p>
+          <h3 class="card-title">Nonlinear Optics and Strong-Field Physics</h3>
+          <p class="card-body">
+            Study of nonlinear optical processes such as second-harmonic generation and high-harmonic
+            generation, with emphasis on the connection between electronic band structure and optical response.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PUBLICATIONS -->
+  <section id="publications">
+    <p class="section-label">Publications</p>
+    <h2 class="section-heading">Selected Publications</h2>
+    <div class="pub-list">
+
+      <div class="pub-item">
+        <span class="pub-year">2026</span>
+        <div>
+          <p class="pub-title">Seeing Trajectory Without Imaging by Exploring Both Radial Momentum and Orbital Angular Momentum of Light</p>
+          <p class="pub-meta">
+            <strong>Xingyu Su</strong>, X. Qiu, J. Wang, D. Zhang, L. Hong, F. Lin, S. Fu, Y. Ren, and L. Chen —
+            <em>Laser &amp; Photonics Reviews</em>, e02894 (2026)
+          </p>
+        </div>
+      </div>
+
+      <div class="pub-item">
+        <span class="pub-year">2026</span>
+        <div>
+          <p class="pub-title">Rotational anisotropy soft X-ray second harmonic generation from GaAs</p>
+          <p class="pub-meta">
+            <strong>Xingyu Su</strong>, T. Sumi, M. Horio, Y. Kubota, S. Owada, G. Yamaguchi, Y. Hirata, Y. Liu,
+            Y. Guan, T. Togashi, K. Tono, Y. Miyauchi, M. Yabashi, and I. Matsuda —
+            <em>e-Journal of Surface Science and Nanotechnology</em>, 24(1), 33–39 (2026)
+          </p>
+        </div>
+      </div>
+
+      <div class="pub-item">
+        <span class="pub-year">2023</span>
+        <div>
+          <p class="pub-title">Turbulence-resilient detection of the rotational Doppler effect with cylindrical vector beams</p>
+          <p class="pub-meta">
+            J. Wang, <strong>Xingyu Su</strong>, T. Liu, L. Hong, H. Guo, X. Qiu, Y. Ren, and L. Chen —
+            <em>Optics Express</em>, 31, 16442–16450 (2023)
+          </p>
+          <span class="pub-badge">Co-first Author</span>
+        </div>
+      </div>
+
+    </div>
+    <p style="margin-top:1.5rem; font-size:0.85rem; color: var(--muted)">
+      Full list available on
+      <a href="https://scholar.google.com/citations?hl=zh-CN&user=5OJOqZQAAAAJ&view_op=list_works&gmla=AEk_c1sc6b1f0Cg720WZxoIF2HOGviwfz0wActaN8Z5equUufbxC9FUHfw9ftYAAxqvP8dJQQLiGgYmRqDY1Qbemqa8qwSrdnGOcO5Z8AYSMqGaEYSM" target="_blank" style="color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accent-light)">Google Scholar</a>
+    </p>
+  </section>
+
+  <!-- NEWS -->
+  <section id="news" style="background: var(--ivory); max-width: 100%; padding-left: clamp(1.5rem,5vw,4rem); padding-right: clamp(1.5rem,5vw,4rem);">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <p class="section-label">News</p>
+      <h2 class="section-heading">News &amp; Highlights</h2>
+      <p class="section-body">
+        A quick overview of recent milestones, beam time, publications, and conference activities.
+        This section is designed to make the homepage feel more current at a glance.
+      </p>
+      <div class="news-grid">
+        <div class="news-panel">
+          <h3>Recent News</h3>
+          <div class="news-list">
+            <div class="news-item">
+              <div class="news-date">2026</div>
+              <div>
+                <h3 class="news-title">Past schedule archive updated for NanoTerasu and conference activities</h3>
+                <p class="news-body">The 2026 archive now includes the Japanese Synchrotron Radiation Society annual meeting and NanoTerasu beam time records.</p>
+                <span class="news-tag">Archive</span>
+              </div>
+            </div>
+            <div class="news-item">
+              <div class="news-date">2026</div>
+              <div>
+                <h3 class="news-title">New paper on rotational anisotropy soft X-ray SHG from GaAs</h3>
+                <p class="news-body">A recent publication on rotational anisotropy soft X-ray second-harmonic generation from GaAs is listed in the selected publications section.</p>
+                <span class="news-tag">Publication</span>
+              </div>
+            </div>
+            <div class="news-item">
+              <div class="news-date">2025</div>
+              <div>
+                <h3 class="news-title">Participated in Gordon Research Conference in X-ray Science</h3>
+                <p class="news-body">Conference participation, beam time records, and event photography were added to the schedule archive for 2025.</p>
+                <span class="news-tag">Conference</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="highlight-panel">
+          <h3>Current Highlights</h3>
+          <div class="highlight-list">
+            <div class="highlight-item">
+              <strong>Research Focus</strong>
+              <span>Soft X-ray nonlinear spectroscopy, ultrafast light–matter interactions, and condensed matter dynamics.</span>
+            </div>
+            <div class="highlight-item">
+              <strong>Facilities</strong>
+              <span>Ongoing experiments and beam time activities at SACLA and NanoTerasu.</span>
+            </div>
+            <div class="highlight-item">
+              <strong>Recent Output</strong>
+              <span>Publications and ongoing manuscript preparation in soft X-ray SHG and related ultrafast spectroscopy topics.</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCHEDULE -->
+  <section id="schedule">
+    <p class="section-label">Schedule</p>
+    <h2 class="section-heading">Schedule &amp; Archive</h2>
+    <p class="section-body">
+      This section keeps both upcoming plans and a browsable archive of past academic activities.
+      Past schedules can be expanded year by year, and each archived item can include one or more images.
+    </p>
+    <div class="schedule-wrap">
+      <div class="schedule-panel">
+        <h3 class="schedule-subheading">Upcoming</h3>
+        <div class="schedule-list">
+          <div class="schedule-item">
+            <div class="schedule-date">Apr 18–20</div>
+            <div>
+              <h3 class="schedule-title">SACLA Beam Time Preparation</h3>
+              <p class="schedule-meta">Finalize alignment, sample checklist, and measurement sequence for the upcoming soft X-ray experiment.</p>
+              <span class="schedule-status">Upcoming</span>
+            </div>
+          </div>
+          <div class="schedule-item">
+            <div class="schedule-date">May 12</div>
+            <div>
+              <h3 class="schedule-title">Group Research Progress Meeting</h3>
+              <p class="schedule-meta">Internal update on SXSHG, GaAs rotational anisotropy analysis, and ongoing manuscript revisions.</p>
+              <span class="schedule-status">Internal</span>
+            </div>
+          </div>
+          <div class="schedule-item">
+            <div class="schedule-date">Jun 3–7</div>
+            <div>
+              <h3 class="schedule-title">Conference / Workshop Travel</h3>
+              <p class="schedule-meta">Presentation schedule, travel notes, or invited talk details can be placed here once confirmed.</p>
+              <span class="schedule-status">Tentative</span>
+            </div>
+          </div>
+          <div class="schedule-item">
+            <div class="schedule-date">Jul 1</div>
+            <div>
+              <h3 class="schedule-title">Manuscript Submission Target</h3>
+              <p class="schedule-meta">Planned submission milestone for ongoing work in soft X-ray nonlinear spectroscopy.</p>
+              <span class="schedule-status">Deadline</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="schedule-archive">
+          <h3 class="schedule-subheading">Past Schedule</h3>
+
+          <details open>
+            <summary>2026</summary>
+            <div class="archive-content">
+              <div class="schedule-item">
+                <div class="schedule-date">Jan 7–9</div>
+                <div>
+                  <h3 class="schedule-title">第39回日本放射光学会年会</h3>
+                  <p class="schedule-meta">Annual meeting of the Japanese Society for Synchrotron Radiation Research, held in Sendai, Japan.</p>
+                  <span class="schedule-status">Conference</span>
+                </div>
+              </div>
+
+              <div class="schedule-item">
+                <div class="schedule-date">Jan 28–30</div>
+                <div>
+                  <h3 class="schedule-title">NanoTerasu Beam Time</h3>
+                  <p class="schedule-meta">NanoTerasu beam time. PI: Masafumi Horio.</p>
+                  <span class="schedule-status">Beam Time</span>
+                </div>
+              </div>
+
+              <div class="schedule-item">
+                <div class="schedule-date">Feb 17–18</div>
+                <div>
+                  <h3 class="schedule-title">NanoTerasu Beam Time</h3>
+                  <p class="schedule-meta">NanoTerasu beam time. PI: Masafumi Horio.</p>
+                  <span class="schedule-status">Beam Time</span>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <details open>
+            <summary>2025</summary>
+            <div class="archive-content">
+              <div class="schedule-item">
+                <div class="schedule-date">Apr 11–14</div>
+                <div>
+                  <h3 class="schedule-title">SACLA Beam Time</h3>
+                  <p class="schedule-meta">SACLA beam time with PI: Faran Zhou.</p>
+                  <span class="schedule-status">Beam Time</span>
+                </div>
+              </div>
+
+              <div class="schedule-item">
+                <div class="schedule-date">Apr 15–22</div>
+                <div>
+                  <h3 class="schedule-title">SACLA Beam Time</h3>
+                  <p class="schedule-meta">SACLA beam time with PI: Walter Drisdell.</p>
+                  <span class="schedule-status">Beam Time</span>
+                </div>
+              </div>
+
+              <div class="schedule-item">
+                <div class="schedule-date">May 21–26</div>
+                <div>
+                  <h3 class="schedule-title">SACLA Beam Time</h3>
+                  <p class="schedule-meta">SACLA beam time with PI: Iwao Matsuda.</p>
+                  <span class="schedule-status">Beam Time</span>
+                </div>
+              </div>
+
+              <div class="schedule-item">
+                <div class="schedule-date">Jun 4–9</div>
+                <div>
+                  <h3 class="schedule-title">SACLA Beam Time</h3>
+                  <p class="schedule-meta">SACLA beam time with PI: Qiucheng Li.</p>
+                  <span class="schedule-status">Beam Time</span>
+                </div>
+              </div>
+
+              <div class="schedule-item">
+                <div class="schedule-date">Jun 10–12</div>
+                <div>
+                  <h3 class="schedule-title">NanoTerasu Beam Time</h3>
+                  <p class="schedule-meta">NanoTerasu beam time with PI: Iwao Matsuda.</p>
+                  <span class="schedule-status">Beam Time</span>
+                </div>
+              </div>
+
+              <div class="schedule-item">
+                <div class="schedule-date">Jul 20–25</div>
+                <div>
+                  <h3 class="schedule-title">Gordon Research Conference in X-ray Science</h3>
+                  <p class="schedule-meta">Attended the Gordon Research Conference in X-ray Science in the Boston area, United States.</p>
+                  <span class="schedule-status">Conference</span>
+                  <div class="schedule-gallery">
+                    <figure class="schedule-figure">
+                      <img src="images/2025-gordon-research-conference.jpg" alt="Group photo from Gordon Research Conference in X-ray Science 2025">
+                      <figcaption>Group photo from the Gordon Research Conference in X-ray Science, July 20–25, 2025.</figcaption>
+                    </figure>
+                  </div>
+                </div>
+              </div>
+
+              <div class="schedule-item">
+                <div class="schedule-date">Oct 15–20</div>
+                <div>
+                  <h3 class="schedule-title">SACLA Beam Time</h3>
+                  <p class="schedule-meta">SACLA beam time with PI: Walter Drisdell.</p>
+                  <span class="schedule-status">Beam Time</span>
+                </div>
+              </div>
+
+              <div class="schedule-item">
+                <div class="schedule-date">Oct 28–Nov 3</div>
+                <div>
+                  <h3 class="schedule-title">SACLA Beam Time</h3>
+                  <p class="schedule-meta">SACLA beam time with PI: Zongxia Guo.</p>
+                  <span class="schedule-status">Beam Time</span>
+                </div>
+              </div>
+
+              <div class="schedule-item">
+                <div class="schedule-date">Nov 18–24</div>
+                <div>
+                  <h3 class="schedule-title">SACLA Beam Time</h3>
+                  <p class="schedule-meta">SACLA beam time with PI: Masafumi Horio.</p>
+                  <span class="schedule-status">Beam Time</span>
+                </div>
+              </div>
+
+              <div class="schedule-item">
+                <div class="schedule-date">Nov 24–28</div>
+                <div>
+                  <h3 class="schedule-title">SACLA Beam Time</h3>
+                  <p class="schedule-meta">SACLA beam time with PI: Yoshichika Otani.</p>
+                  <span class="schedule-status">Beam Time</span>
+                </div>
+              </div>
+
+              <div class="schedule-item">
+                <div class="schedule-date">Nov 28–Dec 1</div>
+                <div>
+                  <h3 class="schedule-title">SACLA Beam Time</h3>
+                  <p class="schedule-meta">SACLA beam time with PI: Iwao Matsuda.</p>
+                  <span class="schedule-status">Beam Time</span>
+                </div>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <aside class="schedule-note">
+        <h3>How to store images</h3>
+        <p>Create a folder named <code>images</code> in the same location as your HTML file. Then put your past-schedule photos inside it.</p>
+        <ul>
+          <li>Example file path: <code>images/2026-seminar-1.jpg</code></li>
+          <li>Supported formats: <code>.jpg</code>, <code>.png</code>, <code>.webp</code></li>
+          <li>One event can have one image or several images.</li>
+        </ul>
+        <p>To add a new picture, duplicate one <code>&lt;figure class="schedule-figure"&gt;...&lt;/figure&gt;</code> block and only change the image path, alt text, and caption.</p>
+        <p>If you later upload this site to GitHub Pages or a university server, just upload the <code>images</code> folder together with the HTML file and the paths will keep working.</p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" style="background: var(--ivory); max-width: 100%; padding-left: clamp(1.5rem,5vw,4rem); padding-right: clamp(1.5rem,5vw,4rem);">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <p class="section-label">Contact</p>
+      <h2 class="section-heading">Get in Touch</h2>
+      <div class="contact-grid">
+        <div>
+          <p class="section-body">
+            If you are interested in my research, would like to explore collaboration opportunities,
+            or simply want to say hello, please feel free to reach out. I typically reply within
+            two business days.
+          </p>
+          <div style="margin-top: 2rem;">
+            <a href="mailto:xingyusu@g.ecc.u-tokyo.ac.jp" class="chip chip-primary" style="display:inline-flex">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              Send an Email
+            </a>
+          </div>
+        </div>
+        <dl class="contact-info">
+          <dt>Email</dt>
+          <dd><a href="mailto:xingyusu@g.ecc.u-tokyo.ac.jp">xingyusu@g.ecc.u-tokyo.ac.jp</a></dd>
+          <dt>Laboratory</dt>
+          <dd>Prof. Matsuda's Laboratory<br>The University of Tokyo</dd>
+          <dt>Address</dt>
+          <dd>A551, Institute for Solid State Physics<br>Kashiwanoha 5-1-5<br>Kashiwa, Chiba 277-8581<br>Japan</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 Xingyu Su.</p>
+  <a href="#home" class="footer-back-top">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+    Back to Top
+  </a>
+</footer>
+
+<script>
+  function toggleMenu() {
+    const m = document.getElementById('mobileMenu');
+    m.classList.toggle('open');
+  }
+  // Highlight active nav link on scroll
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        navLinks.forEach(a => {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { threshold: 0.4 });
+  document.querySelectorAll('[id]').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
