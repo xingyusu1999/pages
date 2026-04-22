@@ -1420,12 +1420,20 @@ body.theme-luka .card.project-card {
 
 [data-theme="dark"] body.theme-luka .card.project-card,
 body.theme-luka[data-theme="dark"] .card.project-card {
-  background: rgba(32, 36, 37, 0.62);
+  background: transparent;
+  border-left-color: var(--luka-research-accent);
+  box-shadow: none;
 }
 
 body.theme-luka .card.project-card:hover {
   border-left-color: var(--luka-science-blue);
   background: linear-gradient(90deg, rgba(18, 84, 168, 0.055), transparent 72%);
+}
+
+[data-theme="dark"] body.theme-luka .card.project-card:hover,
+body.theme-luka[data-theme="dark"] .card.project-card:hover {
+  border-left-color: var(--luka-science-blue);
+  background: linear-gradient(90deg, rgba(124, 200, 255, 0.08), transparent 72%);
 }
 
 body.theme-luka .project-content {
@@ -1441,11 +1449,24 @@ body.theme-luka .project-title {
   line-height: 1.35;
 }
 
+[data-theme="dark"] body.theme-luka .project-title,
+body.theme-luka[data-theme="dark"] .project-title {
+  color: var(--luka-text);
+  text-shadow: none;
+}
+
 body.theme-luka .project-description {
   margin: 0 0 9px;
   color: #34383d;
   font-size: 16px;
   line-height: 1.68;
+}
+
+[data-theme="dark"] body.theme-luka .project-description,
+body.theme-luka[data-theme="dark"] .project-description {
+  color: var(--luka-secondary);
+  font-weight: 400;
+  letter-spacing: 0;
 }
 
 body.theme-luka .project-tags {
@@ -1470,6 +1491,13 @@ body.theme-luka .project-tags .tag {
 [data-theme="dark"] body.theme-luka .project-tags .tag,
 body.theme-luka[data-theme="dark"] .project-tags .tag {
   background: var(--luka-accent-soft);
+  border-color: rgba(143, 176, 221, 0.18);
+  color: var(--luka-research-accent);
+}
+
+[data-theme="dark"] body.theme-luka .map-caption,
+body.theme-luka[data-theme="dark"] .map-caption {
+  color: #b8c7d4;
 }
 
 /* ===== About tagline + focus tags ===== */
