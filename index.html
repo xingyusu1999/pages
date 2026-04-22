@@ -14,11 +14,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ7X4B6Wj7ydh0dLSaE6fKgJcC4sQXk=" crossorigin="">
   <script src="https://kit.fontawesome.com/a860a211d3.js" crossorigin="anonymous"></script>
 
   <link rel="stylesheet" href="assets/css/font_sans_serif.css">
   <link rel="stylesheet" href="assets/css/theme-luka.css">
+
+  <!-- 3D interactive globe (Three.js based) -->
+  <script src="https://unpkg.com/globe.gl@2.34.4/dist/globe.gl.min.js" defer></script>
 </head>
 <body class="theme-luka">
   <nav class="top-nav">
@@ -69,8 +71,8 @@
         <div class="visitor-card">
           <div class="visitor-card-title">Research Footprint</div>
           <div class="visitor-card-body">
-            <div id="researchMap" class="research-map" aria-label="Research footprint map"></div>
-            <div class="map-caption">Xiamen · SACLA · Tokyo · Boston · Berkeley</div>
+            <div id="researchMap" class="research-map" aria-label="Interactive 3D globe showing research footprint"></div>
+            <p class="map-caption">Drag to rotate · click a marker to fly there.</p>
           </div>
         </div>
       </div>
@@ -355,7 +357,6 @@
   </button>
 
   <script src="assets/js/scale.fix.js"></script>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script>
     (function() {
       const themeToggle = document.getElementById('themeToggle');
@@ -366,6 +367,7 @@
         icon.classList.toggle('fa-sun', isDark);
         icon.classList.toggle('fa-moon', !isDark);
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        window.dispatchEvent(new CustomEvent('themechange', { detail: { isDark: isDark } }));
       }
 
       const savedTheme = localStorage.getItem('theme');
@@ -474,53 +476,219 @@
         });
       }
 
+      // ============================================================
+      // Research Footprint — Interactive 3D Globe (globe.gl / three-globe)
+      // ============================================================
       const researchMapEl = document.getElementById('researchMap');
-      if (researchMapEl && window.L) {
+      if (researchMapEl) {
+        // Places in chronological order (used also for the arc flow).
         const places = [
-          { name: 'Xiamen University', lat: 24.4384, lng: 118.0967, label: 'Xiamen' },
-          { name: 'SACLA / SPring-8', lat: 34.9300, lng: 134.4300, label: 'SACLA' },
-          { name: 'The University of Tokyo', lat: 35.7138, lng: 139.7626, label: 'Tokyo' },
-          { name: 'Gordon Research Conference on X-ray Science', lat: 42.3601, lng: -71.0589, label: 'Boston' },
-          { name: 'University of California, Berkeley', lat: 37.8719, lng: -122.2585, label: 'Berkeley' }
+          {
+            name: 'Xiamen University',
+            lat: 24.4384,
+            lng: 118.0967,
+            label: 'Xiamen',
+            period: '2018 – 2022',
+            role: 'B.S. in Physics',
+            detail: 'B.S. in Physics and early research training in Lixiang Chen Lab.',
+            siteUrl: 'https://en.xmu.edu.cn/'
+          },
+          {
+            name: 'The University of Tokyo',
+            lat: 35.7138,
+            lng: 139.7626,
+            label: 'Tokyo',
+            period: '2022 – present',
+            role: 'M.S. / Ph.D. · Current base',
+            detail: 'M.S. and Ph.D. work in the Iwao Matsuda Laboratory.',
+            siteUrl: 'https://www.u-tokyo.ac.jp/en/',
+            current: true
+          },
+          {
+            name: 'SACLA / SPring-8',
+            lat: 34.9300,
+            lng: 134.4300,
+            label: 'SACLA',
+            period: '2023 – 2024',
+            role: 'XFEL Beamtime',
+            detail: 'Soft X-ray nonlinear spectroscopy and XFEL experiments.',
+            siteUrl: 'https://sacla.xfel.jp/?lang=en'
+          },
+          {
+            name: 'Gordon Research Conference',
+            lat: 42.3601,
+            lng: -71.0589,
+            label: 'Boston',
+            period: 'Jul 2025',
+            role: 'Oral presentation',
+            detail: 'GRC on X-ray Science — oral presentation.',
+            siteUrl: 'https://www.grc.org/x-ray-science-conference/2025/'
+          },
+          {
+            name: 'University of California, Berkeley',
+            lat: 37.8719,
+            lng: -122.2585,
+            label: 'Berkeley',
+            period: 'Sep – Nov 2025',
+            role: 'Visiting scholar',
+            detail: 'Visiting student scholar in the Zuerch Lab.',
+            siteUrl: 'https://chemistry.berkeley.edu/people/michael-zuerch'
+          }
         ];
 
-        const map = L.map(researchMapEl, {
-          attributionControl: true,
-          scrollWheelZoom: false,
-          zoomControl: true
-        });
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 10,
-          minZoom: 1,
-          attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-
-        const bounds = [];
-        places.forEach(function(place) {
-          const marker = L.circleMarker([place.lat, place.lng], {
-            radius: 5,
-            color: 'rgb(22, 100, 192)',
-            weight: 2,
-            fillColor: 'rgb(22, 100, 192)',
-            fillOpacity: 0.82
-          }).addTo(map);
-          marker.bindTooltip(place.label, {
-            direction: 'top',
-            offset: [0, -6],
-            opacity: 0.92
+        // Arcs connecting places in chronological order.
+        const arcs = [];
+        for (let i = 0; i < places.length - 1; i++) {
+          arcs.push({
+            startLat: places[i].lat,
+            startLng: places[i].lng,
+            endLat: places[i + 1].lat,
+            endLng: places[i + 1].lng,
+            color: ['rgba(124, 200, 255, 0.95)', 'rgba(134, 215, 201, 0.95)']
           });
-          marker.bindPopup('<strong>' + place.name + '</strong>');
-          bounds.push([place.lat, place.lng]);
-        });
+        }
 
-        map.fitBounds(bounds, { padding: [12, 12] });
-        window.setTimeout(function() {
-          map.invalidateSize();
-          map.fitBounds(bounds, { padding: [12, 12] });
-        }, 160);
-      } else if (researchMapEl) {
-        researchMapEl.classList.add('research-map-failed');
+        // Persistent tooltip + legend/stats overlays (added on top of canvas).
+        const tooltip = document.createElement('div');
+        tooltip.className = 'research-globe-tooltip';
+        researchMapEl.appendChild(tooltip);
+
+        const legend = document.createElement('div');
+        legend.className = 'research-map-legend';
+        legend.innerHTML = '<span class="research-map-legend-dot"></span>Research route';
+        researchMapEl.appendChild(legend);
+
+        const stats = document.createElement('div');
+        stats.className = 'research-map-stats';
+        stats.textContent = places.length + ' sites · 3 countries';
+        researchMapEl.appendChild(stats);
+
+        const showTooltip = function(place) {
+          tooltip.innerHTML =
+            '<strong>' + place.name + '</strong>' +
+            '<span class="tt-sub">' + place.role + ' · ' + place.period + '</span>';
+          tooltip.classList.add('visible');
+        };
+        const hideTooltip = function() {
+          tooltip.classList.remove('visible');
+        };
+
+        const initGlobe = function() {
+          if (typeof Globe !== 'function') return false;
+
+          const rect = researchMapEl.getBoundingClientRect();
+          const size = Math.min(rect.width, rect.height) || 300;
+
+          const globe = Globe({ animateIn: true })
+            .width(rect.width || size)
+            .height(rect.height || size)
+            .backgroundColor('rgba(0,0,0,0)')
+            .globeImageUrl('https://unpkg.com/three-globe@2.31.0/example/img/earth-blue-marble.jpg')
+            .bumpImageUrl('https://unpkg.com/three-globe@2.31.0/example/img/earth-topology.png')
+            .showAtmosphere(true)
+            .atmosphereColor('#7cc8ff')
+            .atmosphereAltitude(0.22)
+            // Points (research locations)
+            .pointsData(places)
+            .pointLat('lat')
+            .pointLng('lng')
+            .pointColor(function(p) { return p.current ? '#ffd36e' : '#7cc8ff'; })
+            .pointAltitude(0.015)
+            .pointRadius(0.45)
+            .pointLabel(function() { return ''; })
+            .onPointHover(function(p) {
+              if (p) {
+                researchMapEl.style.cursor = 'pointer';
+                showTooltip(p);
+              } else {
+                researchMapEl.style.cursor = 'grab';
+                hideTooltip();
+              }
+            })
+            .onPointClick(function(p) {
+              globe.pointOfView({ lat: p.lat, lng: p.lng, altitude: 1.6 }, 1200);
+              showTooltip(p);
+              window.setTimeout(hideTooltip, 3200);
+            })
+            // Rings (pulsing halo around each marker)
+            .ringsData(places)
+            .ringLat('lat')
+            .ringLng('lng')
+            .ringAltitude(0.006)
+            .ringColor(function(p) {
+              const base = p.current ? '255, 211, 110' : '124, 200, 255';
+              return function(t) { return 'rgba(' + base + ',' + (1 - t).toFixed(3) + ')'; };
+            })
+            .ringMaxRadius(3.2)
+            .ringPropagationSpeed(1.6)
+            .ringRepeatPeriod(2400)
+            // Arcs (chronological route)
+            .arcsData(arcs)
+            .arcColor('color')
+            .arcStroke(0.45)
+            .arcDashLength(0.35)
+            .arcDashGap(1.2)
+            .arcDashInitialGap(function(_, i) { return i * 0.4; })
+            .arcDashAnimateTime(2800)
+            .arcAltitudeAutoScale(0.42)
+            (researchMapEl);
+
+          // Initial camera: center on the Pacific so Asia and NA are both visible
+          globe.pointOfView({ lat: 30, lng: -175, altitude: 2.3 }, 0);
+
+          // Orbit controls — slow auto-rotate, disable zoom to keep sidebar layout stable
+          const controls = globe.controls();
+          if (controls) {
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 0.42;
+            controls.enableZoom = false;
+            controls.enablePan = false;
+            controls.minPolarAngle = Math.PI * 0.18;
+            controls.maxPolarAngle = Math.PI * 0.82;
+          }
+
+          // Pause auto-rotate while the user is hovering/interacting
+          researchMapEl.addEventListener('mouseenter', function() {
+            if (controls) controls.autoRotate = false;
+          });
+          researchMapEl.addEventListener('mouseleave', function() {
+            if (controls) controls.autoRotate = true;
+            hideTooltip();
+          });
+
+          // Respond to theme changes (atmosphere tint).
+          window.addEventListener('themechange', function(e) {
+            const dark = e.detail && e.detail.isDark;
+            globe.atmosphereColor(dark ? '#8ab7ca' : '#7cc8ff');
+          });
+
+          // Keep the renderer sized to the container
+          const handleResize = function() {
+            const r = researchMapEl.getBoundingClientRect();
+            if (r.width > 0 && r.height > 0) {
+              globe.width(r.width).height(r.height);
+            }
+          };
+          window.addEventListener('resize', handleResize);
+          // Also watch for sidebar layout shifts
+          if (typeof ResizeObserver !== 'undefined') {
+            const ro = new ResizeObserver(handleResize);
+            ro.observe(researchMapEl);
+          }
+
+          return true;
+        };
+
+        // globe.gl is loaded with `defer`; if it hasn't arrived yet, retry briefly.
+        if (!initGlobe()) {
+          let attempts = 0;
+          const timer = window.setInterval(function() {
+            attempts += 1;
+            if (initGlobe() || attempts > 40) {
+              window.clearInterval(timer);
+            }
+          }, 120);
+        }
       }
     })();
   </script>
