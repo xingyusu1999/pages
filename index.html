@@ -72,7 +72,7 @@
           <div class="visitor-card-title">Research Footprint</div>
           <div class="visitor-card-body">
             <div id="researchMap" class="research-map" aria-label="Interactive 3D globe showing research footprint"></div>
-            <p class="map-caption">Drag to rotate · click a marker to fly there.</p>
+            <p class="map-caption">Drag to rotate · click a marker for Google Maps · <i class="fa-solid fa-up-right-and-down-left-from-center" aria-hidden="true"></i> to enlarge.</p>
           </div>
         </div>
       </div>
@@ -481,7 +481,8 @@
       // ============================================================
       const researchMapEl = document.getElementById('researchMap');
       if (researchMapEl) {
-        // Places in chronological order (used also for the arc flow).
+        // Research locations. `current: true` highlights the active base.
+        // `mapsUrl` opens in a new tab when the marker is clicked.
         const places = [
           {
             name: 'Xiamen University',
@@ -491,7 +492,7 @@
             period: '2018 – 2022',
             role: 'B.S. in Physics',
             detail: 'B.S. in Physics and early research training in Lixiang Chen Lab.',
-            siteUrl: 'https://en.xmu.edu.cn/'
+            mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Xiamen+University'
           },
           {
             name: 'The University of Tokyo',
@@ -501,8 +502,8 @@
             period: '2022 – present',
             role: 'M.S. / Ph.D. · Current base',
             detail: 'M.S. and Ph.D. work in the Iwao Matsuda Laboratory.',
-            siteUrl: 'https://www.u-tokyo.ac.jp/en/',
-            current: true
+            current: true,
+            mapsUrl: 'https://www.google.com/maps/search/?api=1&query=The+University+of+Tokyo+Hongo+Campus'
           },
           {
             name: 'SACLA / SPring-8',
@@ -512,7 +513,7 @@
             period: '2023 – 2024',
             role: 'XFEL Beamtime',
             detail: 'Soft X-ray nonlinear spectroscopy and XFEL experiments.',
-            siteUrl: 'https://sacla.xfel.jp/?lang=en'
+            mapsUrl: 'https://www.google.com/maps/search/?api=1&query=SACLA+SPring-8'
           },
           {
             name: 'Gordon Research Conference',
@@ -522,7 +523,7 @@
             period: 'Jul 2025',
             role: 'Oral presentation',
             detail: 'GRC on X-ray Science — oral presentation.',
-            siteUrl: 'https://www.grc.org/x-ray-science-conference/2025/'
+            mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Boston+Massachusetts'
           },
           {
             name: 'University of California, Berkeley',
@@ -532,85 +533,61 @@
             period: 'Sep – Nov 2025',
             role: 'Visiting scholar',
             detail: 'Visiting student scholar in the Zuerch Lab.',
-            siteUrl: 'https://chemistry.berkeley.edu/people/michael-zuerch'
+            mapsUrl: 'https://www.google.com/maps/search/?api=1&query=University+of+California+Berkeley'
           }
         ];
 
-        // Arcs connecting places in chronological order.
-        const arcs = [];
-        for (let i = 0; i < places.length - 1; i++) {
-          arcs.push({
-            startLat: places[i].lat,
-            startLng: places[i].lng,
-            endLat: places[i + 1].lat,
-            endLng: places[i + 1].lng,
-            color: ['rgba(124, 200, 255, 0.95)', 'rgba(134, 215, 201, 0.95)']
-          });
-        }
+        // --- reusable globe factory -------------------------------------
+        // container: DOM element · tooltipEl: overlay div · opts: {isModal}
+        const buildGlobe = function(container, tooltipEl, opts) {
+          opts = opts || {};
+          const rect = container.getBoundingClientRect();
 
-        // Persistent tooltip + legend/stats overlays (added on top of canvas).
-        const tooltip = document.createElement('div');
-        tooltip.className = 'research-globe-tooltip';
-        researchMapEl.appendChild(tooltip);
-
-        const legend = document.createElement('div');
-        legend.className = 'research-map-legend';
-        legend.innerHTML = '<span class="research-map-legend-dot"></span>Research route';
-        researchMapEl.appendChild(legend);
-
-        const stats = document.createElement('div');
-        stats.className = 'research-map-stats';
-        stats.textContent = places.length + ' sites · 3 countries';
-        researchMapEl.appendChild(stats);
-
-        const showTooltip = function(place) {
-          tooltip.innerHTML =
-            '<strong>' + place.name + '</strong>' +
-            '<span class="tt-sub">' + place.role + ' · ' + place.period + '</span>';
-          tooltip.classList.add('visible');
-        };
-        const hideTooltip = function() {
-          tooltip.classList.remove('visible');
-        };
-
-        const initGlobe = function() {
-          if (typeof Globe !== 'function') return false;
-
-          const rect = researchMapEl.getBoundingClientRect();
-          const size = Math.min(rect.width, rect.height) || 300;
+          const showTooltip = function(p) {
+            if (!tooltipEl) return;
+            tooltipEl.innerHTML =
+              '<strong>' + p.name + '</strong>' +
+              '<span class="tt-sub">' + p.role + ' · ' + p.period + '</span>' +
+              '<span class="tt-cta">Click to open in Google Maps <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span>';
+            tooltipEl.classList.add('visible');
+          };
+          const hideTooltip = function() {
+            if (tooltipEl) tooltipEl.classList.remove('visible');
+          };
 
           const globe = Globe({ animateIn: true })
-            .width(rect.width || size)
-            .height(rect.height || size)
+            .width(rect.width || 300)
+            .height(rect.height || 300)
             .backgroundColor('rgba(0,0,0,0)')
             .globeImageUrl('https://unpkg.com/three-globe@2.31.0/example/img/earth-blue-marble.jpg')
             .bumpImageUrl('https://unpkg.com/three-globe@2.31.0/example/img/earth-topology.png')
             .showAtmosphere(true)
             .atmosphereColor('#7cc8ff')
             .atmosphereAltitude(0.22)
-            // Points (research locations)
+            // Points — glowing markers at each visited place
             .pointsData(places)
             .pointLat('lat')
             .pointLng('lng')
             .pointColor(function(p) { return p.current ? '#ffd36e' : '#7cc8ff'; })
-            .pointAltitude(0.015)
-            .pointRadius(0.45)
+            .pointAltitude(0.018)
+            .pointRadius(opts.isModal ? 0.55 : 0.5)
             .pointLabel(function() { return ''; })
             .onPointHover(function(p) {
               if (p) {
-                researchMapEl.style.cursor = 'pointer';
+                container.style.cursor = 'pointer';
                 showTooltip(p);
               } else {
-                researchMapEl.style.cursor = 'grab';
+                container.style.cursor = 'grab';
                 hideTooltip();
               }
             })
             .onPointClick(function(p) {
-              globe.pointOfView({ lat: p.lat, lng: p.lng, altitude: 1.6 }, 1200);
-              showTooltip(p);
-              window.setTimeout(hideTooltip, 3200);
+              // Open the Google Maps link in a new tab.
+              if (p && p.mapsUrl) {
+                window.open(p.mapsUrl, '_blank', 'noopener,noreferrer');
+              }
             })
-            // Rings (pulsing halo around each marker)
+            // Rings — pulsing halo around each marker
             .ringsData(places)
             .ringLat('lat')
             .ringLng('lng')
@@ -619,74 +596,164 @@
               const base = p.current ? '255, 211, 110' : '124, 200, 255';
               return function(t) { return 'rgba(' + base + ',' + (1 - t).toFixed(3) + ')'; };
             })
-            .ringMaxRadius(3.2)
+            .ringMaxRadius(opts.isModal ? 4.5 : 3.2)
             .ringPropagationSpeed(1.6)
             .ringRepeatPeriod(2400)
-            // Arcs (chronological route)
-            .arcsData(arcs)
-            .arcColor('color')
-            .arcStroke(0.45)
-            .arcDashLength(0.35)
-            .arcDashGap(1.2)
-            .arcDashInitialGap(function(_, i) { return i * 0.4; })
-            .arcDashAnimateTime(2800)
-            .arcAltitudeAutoScale(0.42)
-            (researchMapEl);
+            (container);
 
-          // Initial camera: center on the Pacific so Asia and NA are both visible
-          globe.pointOfView({ lat: 30, lng: -175, altitude: 2.3 }, 0);
+          // Initial camera: Pacific-centered so Asia + NA both visible
+          globe.pointOfView({ lat: 30, lng: -175, altitude: opts.isModal ? 2.0 : 2.3 }, 0);
 
-          // Orbit controls — slow auto-rotate, disable zoom to keep sidebar layout stable
           const controls = globe.controls();
           if (controls) {
             controls.autoRotate = true;
-            controls.autoRotateSpeed = 0.42;
-            controls.enableZoom = false;
+            controls.autoRotateSpeed = opts.isModal ? 0.28 : 0.42;
+            controls.enableZoom = !!opts.isModal;   // zoom only in modal
             controls.enablePan = false;
-            controls.minPolarAngle = Math.PI * 0.18;
-            controls.maxPolarAngle = Math.PI * 0.82;
+            controls.minPolarAngle = Math.PI * 0.15;
+            controls.maxPolarAngle = Math.PI * 0.85;
           }
 
-          // Pause auto-rotate while the user is hovering/interacting
-          researchMapEl.addEventListener('mouseenter', function() {
+          container.addEventListener('mouseenter', function() {
             if (controls) controls.autoRotate = false;
           });
-          researchMapEl.addEventListener('mouseleave', function() {
+          container.addEventListener('mouseleave', function() {
             if (controls) controls.autoRotate = true;
             hideTooltip();
           });
 
-          // Respond to theme changes (atmosphere tint).
-          window.addEventListener('themechange', function(e) {
+          const themeHandler = function(e) {
             const dark = e.detail && e.detail.isDark;
             globe.atmosphereColor(dark ? '#8ab7ca' : '#7cc8ff');
-          });
+          };
+          window.addEventListener('themechange', themeHandler);
 
-          // Keep the renderer sized to the container
           const handleResize = function() {
-            const r = researchMapEl.getBoundingClientRect();
+            const r = container.getBoundingClientRect();
             if (r.width > 0 && r.height > 0) {
               globe.width(r.width).height(r.height);
             }
           };
           window.addEventListener('resize', handleResize);
-          // Also watch for sidebar layout shifts
+          let ro = null;
           if (typeof ResizeObserver !== 'undefined') {
-            const ro = new ResizeObserver(handleResize);
-            ro.observe(researchMapEl);
+            ro = new ResizeObserver(handleResize);
+            ro.observe(container);
           }
 
-          return true;
+          // Expose a destroy hook for the modal instance
+          globe.__cleanup = function() {
+            window.removeEventListener('resize', handleResize);
+            window.removeEventListener('themechange', themeHandler);
+            if (ro) ro.disconnect();
+            // globe.gl does not expose a public dispose; clearing innerHTML
+            // releases the WebGL context when the node is removed from DOM.
+            container.innerHTML = '';
+          };
+
+          return globe;
         };
 
-        // globe.gl is loaded with `defer`; if it hasn't arrived yet, retry briefly.
-        if (!initGlobe()) {
+        // --- mini globe overlays (tooltip, legend, stats, expand btn) ---
+        const miniTooltip = document.createElement('div');
+        miniTooltip.className = 'research-globe-tooltip';
+        researchMapEl.appendChild(miniTooltip);
+
+        const legend = document.createElement('div');
+        legend.className = 'research-map-legend';
+        legend.innerHTML = '<span class="research-map-legend-dot"></span>Visited places';
+        researchMapEl.appendChild(legend);
+
+        const stats = document.createElement('div');
+        stats.className = 'research-map-stats';
+        stats.textContent = places.length + ' sites · 3 countries';
+        researchMapEl.appendChild(stats);
+
+        const expandBtn = document.createElement('button');
+        expandBtn.type = 'button';
+        expandBtn.className = 'research-map-expand';
+        expandBtn.setAttribute('aria-label', 'Enlarge globe');
+        expandBtn.title = 'Enlarge';
+        expandBtn.innerHTML = '<i class="fa-solid fa-up-right-and-down-left-from-center"></i>';
+        researchMapEl.appendChild(expandBtn);
+
+        // --- modal (built lazily on first open) -------------------------
+        let modalEl = null;
+        let modalGlobe = null;
+
+        const buildModal = function() {
+          modalEl = document.createElement('div');
+          modalEl.className = 'research-globe-modal';
+          modalEl.setAttribute('role', 'dialog');
+          modalEl.setAttribute('aria-modal', 'true');
+          modalEl.setAttribute('aria-label', 'Research footprint — enlarged view');
+          modalEl.innerHTML =
+            '<div class="research-globe-modal-backdrop"></div>' +
+            '<div class="research-globe-modal-panel">' +
+              '<button type="button" class="research-globe-modal-close" aria-label="Close">' +
+                '<i class="fa-solid fa-xmark"></i>' +
+              '</button>' +
+              '<div class="research-globe-modal-title">Research Footprint</div>' +
+              '<div class="research-globe-modal-stage">' +
+                '<div class="research-globe-modal-canvas" id="researchMapModalCanvas"></div>' +
+                '<div class="research-globe-tooltip research-globe-tooltip--modal"></div>' +
+              '</div>' +
+              '<div class="research-globe-modal-hint">Drag to rotate · scroll to zoom · click a marker to open it in Google Maps</div>' +
+            '</div>';
+          document.body.appendChild(modalEl);
+
+          const backdrop = modalEl.querySelector('.research-globe-modal-backdrop');
+          const closeBtn = modalEl.querySelector('.research-globe-modal-close');
+          backdrop.addEventListener('click', closeModal);
+          closeBtn.addEventListener('click', closeModal);
+        };
+
+        const openModal = function() {
+          if (!modalEl) buildModal();
+          modalEl.classList.add('visible');
+          document.body.classList.add('research-modal-open');
+          // Build the modal globe lazily on first open
+          window.requestAnimationFrame(function() {
+            const canvas = modalEl.querySelector('#researchMapModalCanvas');
+            const modalTooltip = modalEl.querySelector('.research-globe-tooltip--modal');
+            if (!modalGlobe && typeof Globe === 'function') {
+              modalGlobe = buildGlobe(canvas, modalTooltip, { isModal: true });
+            } else if (modalGlobe) {
+              // Re-trigger resize in case window changed while closed
+              const r = canvas.getBoundingClientRect();
+              modalGlobe.width(r.width).height(r.height);
+            }
+          });
+        };
+        const closeModal = function() {
+          if (!modalEl) return;
+          modalEl.classList.remove('visible');
+          document.body.classList.remove('research-modal-open');
+        };
+
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && modalEl && modalEl.classList.contains('visible')) {
+            closeModal();
+          }
+        });
+
+        expandBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          openModal();
+        });
+
+        // --- boot the mini globe (retry while globe.gl loads) -----------
+        let miniGlobe = null;
+        const tryInit = function() {
+          if (typeof Globe !== 'function') return false;
+          miniGlobe = buildGlobe(researchMapEl, miniTooltip, { isModal: false });
+          return true;
+        };
+        if (!tryInit()) {
           let attempts = 0;
           const timer = window.setInterval(function() {
             attempts += 1;
-            if (initGlobe() || attempts > 40) {
-              window.clearInterval(timer);
-            }
+            if (tryInit() || attempts > 40) window.clearInterval(timer);
           }, 120);
         }
       }
