@@ -72,7 +72,7 @@
           <div class="visitor-card-title">Research Footprint</div>
           <div class="visitor-card-body">
             <div id="researchMap" class="research-map" aria-label="Interactive 3D globe showing research footprint"></div>
-            <p class="map-caption">Drag to rotate · click a marker for Google Maps · <i class="fa-solid fa-up-right-and-down-left-from-center" aria-hidden="true"></i> to enlarge.</p>
+            <p class="map-caption">Drag to rotate · scroll to zoom · click a marker for Google Maps · <i class="fa-solid fa-up-right-and-down-left-from-center" aria-hidden="true"></i> to enlarge.</p>
           </div>
         </div>
       </div>
@@ -570,7 +570,8 @@
             .pointLng('lng')
             .pointColor(function(p) { return p.current ? '#ffd36e' : '#7cc8ff'; })
             .pointAltitude(0.018)
-            .pointRadius(opts.isModal ? 0.55 : 0.5)
+            // Larger hit area on the mini globe so markers are easy to click
+            .pointRadius(opts.isModal ? 0.6 : 0.85)
             .pointLabel(function() { return ''; })
             .onPointHover(function(p) {
               if (p) {
@@ -608,7 +609,10 @@
           if (controls) {
             controls.autoRotate = true;
             controls.autoRotateSpeed = opts.isModal ? 0.28 : 0.42;
-            controls.enableZoom = !!opts.isModal;   // zoom only in modal
+            controls.enableZoom = true;             // scroll / pinch to zoom
+            controls.zoomSpeed = opts.isModal ? 1.0 : 0.6;
+            controls.minDistance = 150;             // don't crash into surface
+            controls.maxDistance = 600;             // don't zoom absurdly far
             controls.enablePan = false;
             controls.minPolarAngle = Math.PI * 0.15;
             controls.maxPolarAngle = Math.PI * 0.85;
